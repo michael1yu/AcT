@@ -136,6 +136,40 @@ class Trainer:
         self.ds_test = self.ds_test.batch(self.config['BATCH_SIZE'])
         self.ds_test = self.ds_test.prefetch(tf.data.experimental.AUTOTUNE)
         
+    def pass_data(self, X_train, y_train, X_test, y_test):
+        self.train_len = len(y_train)
+        self.test_len = len(y_test)
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train,
+                                                          test_size=self.config['VAL_SIZE'],
+                                                          random_state=self.config['SEEDS'][self.fold],
+                                                          stratify=y_train)
+
+        self.ds_train = tf.data.Dataset.from_tensor_slices((X_train, y_train))
+        self.ds_val = tf.data.Dataset.from_tensor_slices((X_val, y_val))
+        self.ds_test = tf.data.Dataset.from_tensor_slices((X_test, y_test))
+            
+        self.ds_train = self.ds_train.map(lambda x,y : one_hot(x,y,self.config[self.config['DATASET']]['CLASSES']), 
+                                          num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        self.ds_train = self.ds_train.cache()
+        self.ds_train = self.ds_train.map(random_flip, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        self.ds_train = self.ds_train.map(random_noise, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        self.ds_train = self.ds_train.shuffle(X_train.shape[0])
+        self.ds_train = self.ds_train.batch(self.config['BATCH_SIZE'])
+        self.ds_train = self.ds_train.prefetch(tf.data.experimental.AUTOTUNE)
+        
+        self.ds_val = self.ds_val.map(lambda x,y : one_hot(x,y,self.config[self.config['DATASET']]['CLASSES']), 
+                                      num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        self.ds_val = self.ds_val.cache()
+        self.ds_val = self.ds_val.batch(self.config['BATCH_SIZE'])
+        self.ds_val = self.ds_val.prefetch(tf.data.experimental.AUTOTUNE)
+
+        
+        self.ds_test = self.ds_test.map(lambda x,y : one_hot(x,y,self.config[self.config['DATASET']]['CLASSES']), 
+                                        num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        self.ds_test = self.ds_test.cache()
+        self.ds_test = self.ds_test.batch(self.config['BATCH_SIZE'])
+        self.ds_test = self.ds_test.prefetch(tf.data.experimental.AUTOTUNE)
+        
     def get_random_hp(self):
         # self.config['RN_STD'] = self.trial.suggest_discrete_uniform("RN_STD", 0.0, 0.03, 0.01)
         self.config['WEIGHT_DECAY'] = self.trial.suggest_discrete_uniform("WD", 1e-5, 1e-3, 1e-5)
@@ -153,8 +187,8 @@ class Trainer:
         self.logger.save_log('SUBSAMPLE: {}'.format(self.config['SUBSAMPLE']))
         self.logger.save_log('SCHEDULER: {}\n'.format(self.config['SCHEDULER']))
         
-    def do_training(self):
-        self.get_data()
+    def do_training(self, X_train, y_train, X_test, y_test):
+        self.pass_data()
         self.get_model()
 
         self.model.fit(self.ds_train,
