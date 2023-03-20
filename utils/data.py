@@ -71,7 +71,7 @@ def load_kinetics(config, fold=0):
     return train_gen, val_gen, test_gen, len(y_train), len(y_test)
 
 
-def load_mpose(dataset, vid_set, verbose=False, legacy=False, vidset=None):
+def load_mpose(dataset, split, verbose=False, legacy=False, vidset=None):
     
     if legacy:
         return load_dataset_legacy(data_folder=f'datasets/openpose_bm/split{split}/base_vars/')
