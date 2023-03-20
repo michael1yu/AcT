@@ -71,7 +71,7 @@ def load_kinetics(config, fold=0):
     return train_gen, val_gen, test_gen, len(y_train), len(y_test)
 
 
-def load_mpose(dataset, split, verbose=False, legacy=False):
+def load_mpose(dataset, vid_set, verbose=False, legacy=False, vidset="utkinect"):
     
     if legacy:
         return load_dataset_legacy(data_folder=f'datasets/openpose_bm/split{split}/base_vars/')
@@ -88,13 +88,34 @@ def load_mpose(dataset, split, verbose=False, legacy=False):
         d.remove_confidence()
         d.flatten_features()
         #d.reduce_labels()
-        return d.get_data()
-    
+        X_train, y_train, X_test, y_test = d.get_data()
     elif 'openpose' in dataset:
         X_train, y_train, X_test, y_test = d.get_data()
-        return X_train, transform_labels(y_train), X_test, transform_labels(y_test)
+        y_train = transform_labels(y_train)
+        y_test = transform_labels(y_test)
     else:
-        return d.get_data()
+        X_train, y_train, X_test, y_test = d.get_data()
+    
+    vid_X_train = []
+    vid_y_train = []
+    vid_train_ids = []
+    vid_X_test = []
+    vid_y_test = []
+    vid_test_ids = []
+
+    for i in range(len(X_train)):
+      if vidset in train_ids[i]:
+        vid_X_train.append(X_train[i])
+        vid_y_train.append(y_train[i])
+        vid_train_ids.append(train_ids[i])
+
+    for i in range(len(X_test)):
+      if vidset in test_ids[i]:
+        vid_X_test.append(X_test[i])
+        vid_y_test.append(y_test[i])
+        vid_test_ids.append(test_ids[i])
+        
+    return vid_X_train, vid_y_train, vid_X_test, vid_y_test
         
 
 def random_flip(x, y):
