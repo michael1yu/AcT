@@ -188,7 +188,7 @@ class Trainer:
         self.logger.save_log('SCHEDULER: {}\n'.format(self.config['SCHEDULER']))
         
     def do_training(self, X_train, y_train, X_test, y_test):
-        self.pass_data()
+        self.pass_data(X_train, y_train, X_test, y_test)
         self.get_model()
 
         self.model.fit(self.ds_train,
