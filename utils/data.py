@@ -90,11 +90,11 @@ def load_mpose(dataset, vid_set, verbose=False, legacy=False, vidset=None):
         #d.reduce_labels()
         X_train, y_train, train_ids, X_test, y_test, test_ids = d.get_data(seq_id=True)
     elif 'openpose' in dataset:
-         X_train, y_train, train_ids, X_test, y_test, test_ids = d.get_data(seq_id=True)
+        X_train, y_train, train_ids, X_test, y_test, test_ids = d.get_data(seq_id=True)
         y_train = transform_labels(y_train)
         y_test = transform_labels(y_test)
     else:
-         X_train, y_train, train_ids, X_test, y_test, test_ids = d.get_data(seq_id=True)
+        X_train, y_train, train_ids, X_test, y_test, test_ids = d.get_data(seq_id=True)
     
     if vidset is None:
         return  X_train, y_train, train_ids, X_test, y_test, test_ids
@@ -107,16 +107,16 @@ def load_mpose(dataset, vid_set, verbose=False, legacy=False, vidset=None):
     vid_test_ids = []
 
     for i in range(len(X_train)):
-      if vidset in train_ids[i]:
-        vid_X_train.append(X_train[i])
-        vid_y_train.append(y_train[i])
-        vid_train_ids.append(train_ids[i])
+        if vidset in train_ids[i]:
+            vid_X_train.append(X_train[i])
+            vid_y_train.append(y_train[i])
+            vid_train_ids.append(train_ids[i])
 
     for i in range(len(X_test)):
-      if vidset in test_ids[i]:
-        vid_X_test.append(X_test[i])
-        vid_y_test.append(y_test[i])
-        vid_test_ids.append(test_ids[i])
+        if vidset in test_ids[i]:
+            vid_X_test.append(X_test[i])
+            vid_y_test.append(y_test[i])
+            vid_test_ids.append(test_ids[i])
         
     return vid_X_train, vid_y_train, vid_X_test, vid_y_test
         
