@@ -26,7 +26,7 @@ from utils.tools import Logger
 
 # TRAINER CLASS 
 class Trainer:
-    def __init__(self, config, logger, split=1, fold=0):
+    def __init__(self, config, logger, split=1, fold=0, vidset="utkinect"):
         self.config = config
         self.logger = logger
         self.split = split
@@ -44,6 +44,8 @@ class Trainer:
         self.d_model = 64 * self.n_heads
         self.d_ff = self.d_model * 4
         self.pos_emb = self.config['POS_EMB']
+        
+        self.vidset = vidset
 
         
     def build_act(self, transformer):
