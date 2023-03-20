@@ -97,7 +97,7 @@ def load_mpose(dataset, split, verbose=False, legacy=False, vidset=None):
         X_train, y_train, train_ids, X_test, y_test, test_ids = d.get_data(seq_id=True)
     
     if vidset is None:
-        return  X_train, y_train, train_ids, X_test, y_test, test_ids
+        return  X_train, y_train, X_test, y_test
     
     vid_X_train = []
     vid_y_train = []
