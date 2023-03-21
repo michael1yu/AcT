@@ -191,7 +191,7 @@ class Trainer:
         self.pass_data(X_train, y_train, X_test, y_test)
         self.get_model()
 
-        self.model.fit(self.ds_train,
+        history = self.model.fit(self.ds_train,
                        epochs=self.config['N_EPOCHS'], initial_epoch=0,
                        validation_data=self.ds_val,
                        callbacks=[self.checkpointer], verbose=self.config['VERBOSE'],
@@ -217,7 +217,7 @@ class Trainer:
         text = f"Accuracy Test: {accuracy_test} <> Balanced Accuracy: {balanced_accuracy}\n"
         print(text)
         
-        return accuracy_test, balanced_accuracy
+        return history, accuracy_test, balanced_accuracy
     
     def objective(self, trial):
         self.trial = trial     
