@@ -215,7 +215,7 @@ class Trainer:
         balanced_accuracy = sklearn.metrics.balanced_accuracy_score(tf.math.argmax(tf.concat(y, axis=0), axis=1), y_pred)
 
         text = f"Accuracy Test: {accuracy_test} <> Balanced Accuracy: {balanced_accuracy}\n"
-        self.logger.save_log(text)
+        print(text)
         
         return accuracy_test, balanced_accuracy
     
