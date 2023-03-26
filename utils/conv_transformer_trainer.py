@@ -25,7 +25,7 @@ from utils.tools import Logger
 
 
 # TRAINER CLASS 
-class Trainer:
+class ConvTransformerTrainer:
     def __init__(self, config, logger, split=1, fold=0, vidset="utkinect"):
         self.config = config
         self.logger = logger
