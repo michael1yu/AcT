@@ -52,9 +52,9 @@ class ConvTransformerTrainer:
         shape = (self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
                                               self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS'])
         inputs = tf.keras.layers.Input(shape=shape)
-        x = tf.reshape(inputs, shape=(*shape, 1))
+        x = tf.keras.layers.Reshape((*shape, 1))(inputs)
         x = tf.keras.layers.Conv2D(10, 2, activation='relu')(x)
-        x = tf.reshape(x, shape=shape)
+        x = tf.keras.layers.Reshape(shape)(x)
         x = tf.keras.layers.Dense(self.d_model)(x)
         x = PatchClassEmbedding(self.d_model, self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
                                 pos_emb=None)(x)
