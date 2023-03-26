@@ -219,6 +219,46 @@ class Trainer:
         
         return history, accuracy_test, balanced_accuracy
     
+    def do_ensemble_training(self, model_2, X_train, y_train, X_test, y_test):
+        self.pass_data(X_train, y_train, X_test, y_test)
+        self.get_model()
+        
+        inputs = tf.keras.layers.Input(shape=(self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
+                                              self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS']))
+        
+        models = [self.model, model_2]
+        model_outputs = [model(inputs) for model in models]
+        ensemble_output = tf.keras.layers.Average()(model_outputs)
+        ensemble_model = tf.keras.Model(inputs=model_input, outputs=ensemble_output)
+        self.model = ensemble_model
+        history = self.model.fit(self.ds_train,
+                       epochs=self.config['N_EPOCHS'], initial_epoch=0,
+                       validation_data=self.ds_val,
+                       callbacks=[self.checkpointer], verbose=self.config['VERBOSE'],
+                       #steps_per_epoch=int(self.train_steps*0.9),
+                       #validation_steps=self.train_steps//9
+                      )
+        
+        self.model.load_weights(self.bin_path+self.name_model_bin)            
+        _, accuracy_test = self.model.evaluate(self.ds_test, steps=self.test_steps)
+        
+        if self.config['DATASET'] == 'kinetics':
+            g = list(self.ds_test.take(self.test_steps).as_numpy_iterator())
+            X = [e[0] for e in g]
+            X = np.vstack(X)
+            y = [e[1] for e in g]
+            y = np.vstack(y)
+        else:
+            X, y = tuple(zip(*self.ds_test))
+        
+        y_pred = np.argmax(tf.nn.softmax(self.model.predict(tf.concat(X, axis=0)), axis=-1),axis=1)
+        balanced_accuracy = sklearn.metrics.balanced_accuracy_score(tf.math.argmax(tf.concat(y, axis=0), axis=1), y_pred)
+
+        text = f"Accuracy Test: {accuracy_test} <> Balanced Accuracy: {balanced_accuracy}\n"
+        print(text)
+        
+        return history, accuracy_test, balanced_accuracy
+    
     def objective(self, trial):
         self.trial = trial     
         self.get_random_hp()
