@@ -53,6 +53,7 @@ class ConvTransformerTrainer:
                                               self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS'])
         inputs = tf.keras.layers.Input(shape=shape)
         x = tf.keras.layers.Reshape((*shape, 1))(inputs)
+        print(tf.shape(x))
         x = tf.keras.layers.Conv2D(10, 2, activation='relu')(x)
         x = tf.keras.layers.Reshape(shape)(x)
         x = tf.keras.layers.Dense(self.d_model)(x)
