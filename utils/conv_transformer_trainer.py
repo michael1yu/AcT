@@ -52,8 +52,10 @@ class ConvTransformerTrainer:
         shape = (self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS'])
         inputs = tf.keras.layers.Input(shape=shape)
         x = tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1))(inputs)
+        print(x.shape)
         x = tf.keras.layers.Conv2D(10, 2, activation='relu')(x)
         x = tf.keras.layers.Lambda(lambda x: tf.squeeze(x))(x)
+        print(x.shape)
         x = tf.keras.layers.Dense(self.d_model)(x)
         x = PatchClassEmbedding(self.d_model, self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
                                 pos_emb=None)(x)
@@ -65,6 +67,7 @@ class ConvTransformerTrainer:
 
     
     def get_model(self):
+        print("TESTING")
         transformer = TransformerEncoder(self.d_model, self.n_heads, self.d_ff, self.dropout, self.activation, self.n_layers)
         self.model = self.build_act(transformer)
         
