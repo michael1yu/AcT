@@ -51,6 +51,7 @@ class ConvTransformerTrainer:
     def build_act(self, transformer):
         shape = (self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS'])
         inputs = tf.keras.layers.Input(shape=shape)
+        print("TEST")
         x = tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1))(inputs)
         x = tf.keras.layers.Conv2D(10, 2, activation='relu')(x)
         x = tf.keras.layers.Reshape(shape)(x)
