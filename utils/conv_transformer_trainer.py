@@ -57,6 +57,7 @@ class ConvTransformerTrainer:
         #x = tf.keras.layers.Lambda(lambda x: tf.squeeze(x))(x)
         print("Flattened: ", x.get_shape())
         x = tf.keras.layers.Dense(self.d_model)(x)
+        print("Densed: ", x.get_shape())
         x = PatchClassEmbedding(self.d_model, self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
                                 pos_emb=None)(x)
         x = transformer(x)
