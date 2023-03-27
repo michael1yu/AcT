@@ -55,7 +55,7 @@ class ConvTransformerTrainer:
         print("CONV2D Shape: ", x.get_shape().as_list())
         x = tf.keras.layers.Conv2D(10, 2, activation='relu', input_shape=(*shape, 1))(x)
         x = tf.keras.layers.Lambda(lambda x: tf.reshape(x, shape=shape))(x)
-        x = tf.keras.layers.Reshape((x.get_shape()[0], x.get_shape()[1], x.get_shape()[2] * x.get_shape()[3]))(x)
+        x = tf.keras.layers.Reshape((x.get_shape()[1], x.get_shape()[2] * x.get_shape()[3]))(x)
         print("Flattened: ", x.get_shape())
         x = tf.keras.layers.Dense(self.d_model)(x)
         print("Densed: ", x.get_shape())
